@@ -1,0 +1,136 @@
+  2
+  |
+ 3#-3
+  |
+ 1#1
+  |
+#-l-
+  2
+w,s
+
+red coin - 2
+corroded coin - 3
+shiny coin - 5
+concave coin - 7
+blue coin - 9
+
+x + y * z^2 + a^3 - b = 399
+a = 7
+x + y * z^2 - b = 56
+y = 2
+z = 5
+x - b = 6
+x = 9
+b = 3
+
+blue, red, shiny, concave, corroded
+
+0x05d7 - breakpoint for 5-book.bin during 'use teleporter'
+
+fns
+r0 is the return value
+0x178b:
+print: 0x05fb
+
+l 5-book.bin
+b @ 0x154b - r7 test (or 'b a r7')
+w 7 b1 - set r7 to something
+c
+'use teleporter' -> breaks @ 0x154b
+0x154b - jf r7 0x15e5 ; if we haven't set r7, we jump to 0x15e5, else fall through:
+e # enable instruction output
+c # will run until next r7 access
+// checks r7 and sees it is non-0, prints message
+// after printing last newline from message
+0x0604: pop r1 | pop r1
+0x0606: ret | ret 0x05dc
+// loop incr
+0x05dc: add r1 r1 <1> | add r1 168 1
+0x05e0: jt r1 <1480> | jt 169 0x05c8
+0x05c8: add r3 <1> r1 | add r3 1 169
+// loop test (true, have written whole string)
+0x05cc: gt r0 r3 r4 | gt r0 170 169
+// return from loop
+0x05d0: jt r0 <1507> | jt 1 0x05e3
+// restore registers
+0x05e3: pop r6 | pop r6
+0x05e5: pop r5 | pop r5
+0x05e7: pop r4 | pop r4
+0x05e9: pop r3 | pop r3
+0x05eb: pop r0 | pop r0
+// return to caller
+0x05ed: ret | ret 0x1560
+// restore registers
+0x1560: pop r2 | pop r2
+0x1562: pop r1 | pop r1
+0x1564: pop r0 | pop r0
+0x1566: noop | noop
+0x1567: noop | noop
+0x1568: noop | noop
+0x1569: noop | noop
+0x156a: noop | noop
+
+= 6.bin =
+// 0x178b takes 2 args; first call is (4, 1)
+// set args for call to 0x178b
+// arg1: outer loop counter
+// arg2: inner loop counter
+// foreach iter inner loop, pushes r0 on stack
+// then loads r7 into arg2 and repeats...
+// so w/ r7=1, stack gets:
+[4;3 (once); 2 (once); 1 (once)]
+0x156b: set r0 <4> | set r0 4
+0x156e: set r1 <1> | set r1 1
+0x1571: call <6027> | call 0x178b
+// test loop counters
+0x178b: jt r0 <6035> | jt 4 0x1793
+0x1793: jt r1 <6048> | jt 1 0x17a0
+// put arg1 on stack
+0x17a0: push r0 | push 4
+// arg2 - 1
+0x17a2: add r1 r1 <32767> | add r1 1 32767
+// recurse
+0x17a6: call <6027> | call 0x178b
+//check arg1 is non-0
+0x178b: jt r0 <6035> | jt 4 0x1793
+// arg2 is now 0, fall through
+0x1793: jt r1 <6048> | jt 0 0x17a0
+// arg1 - 1
+0x1796: add r0 r0 <32767> | add r0 4 32767
+// load r7 into r1
+0x179a: set r1 r7 | set r1 1
+0x179d: call <6027> | call 0x178b
+
+to bypass teleporter:
+- l 6.bin # load save from having read the book, at IP 0x156b
+- w 7 0 # write 0 back into r7
+- b @ 0x1577 # this is where the teleporter does its sanity check
+- c # run to breakpoint
+- w 1 1 # now write non-0 into r1 check register; bypasses teleporter sanity check
+- c # continue
+-> INTERESTING, yields bogus code?!?
+So, the generated code uses the value in r7. So we can't just hack around, must back out the r7 value
+
+// pseudo-code:
+foo(x, y, r7):
+if x != 0 {
+  if y != 0 {
+    let y2 = foo(x, y - 1, r7);
+    return foo(x - 1, y2, r7);
+  } else {
+    return foo(x - 1, r7, r7);
+  }
+} else {
+  return y + 1;
+}
+// impl ^ w/ memoization, run for 0..65536, yields:
+* r7 = 25734
+
+// so, to set & bypass the check:
+- l 6.bin # load save from having read the book, at IP 0x156b
+- w 7 0 # write 0 back into r7 for fast processing (could skip call to check, i suppose)
+- b @ 0x1577 # this is where the teleporter does its sanity check
+- c # run to breakpoint
+- w 1 1 # now write non-0 into r1 check register to get correct jump
+- w 7 25734 # this is the actual r7 value we want
+- c # continue -> hey presto!

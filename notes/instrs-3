@@ -1,0 +1,140 @@
+0x156b: set r0 <4> | set r0 4
+0x156e: set r1 <1> | set r1 1
+0x1571: call <6027> | call 0x178b -> foo(x: 4, y: 1)
+0x178b: jt r0 <6035> | jt 4 0x1793 -> if x != 0
+0x1793: jt r1 <6048> | jt 1 0x17a0 -> if y != 0
+0x17a0: push r0 | push 4 -> r0 is our return register, store its local value before calling
+0x17a2: add r1 r1 <32767> | add r1 1 32767
+0x17a6: call <6027> | call 0x178b // E -> y = foo(x, y - 1) // y+1 from prior step // THIS GETS A RETURN (FILL IN _ later)
+0x178b: jt r0 <6035> | jt 4 0x1793 -> if x!=0
+0x1793: jt r1 <6048> | jt 0 0x17a0 -> if y!=0 (ELSE BRANCH)
+0x1796: add r0 r0 <32767> | add r0 4 32767 // we are going to return directly below, so no need to store r0
+0x179a: set r1 r7 | set r1 0 // ELSE...
+0x179d: call <6027> | call 0x178b // D // return foo(x - 1, r7) // direct return since we don't store r0
+0x178b: jt r0 <6035> | jt 3 0x1793
+0x1793: jt r1 <6048> | jt 0 0x17a0
+0x1796: add r0 r0 <32767> | add r0 3 32767
+0x179a: set r1 r7 | set r1 0
+0x179d: call <6027> | call 0x178b // C
+0x178b: jt r0 <6035> | jt 2 0x1793
+0x1793: jt r1 <6048> | jt 0 0x17a0
+0x1796: add r0 r0 <32767> | add r0 2 32767
+0x179a: set r1 r7 | set r1 0
+0x179d: call <6027> | call 0x178b // B
+0x178b: jt r0 <6035> | jt 1 0x1793
+0x1793: jt r1 <6048> | jt 0 0x17a0
+0x1796: add r0 r0 <32767> | add r0 1 32767
+0x179a: set r1 r7 | set r1 0
+0x179d: call <6027> | call 0x178b // A
+0x178b: jt r0 <6035> | jt 0 0x1793
+0x178e: add r0 r1 <1> | add r0 0 1
+0x1792: ret | ret 0x179f // A
+0x179f: ret | ret 0x179f // B
+0x179f: ret | ret 0x179f // C
+0x179f: ret | ret 0x179f // D
+0x179f: ret | ret 0x17a8 // E
+0x17a8: set r1 r0 | set r1 1
+0x17ab: pop r0 | pop r0
+0x17ad: add r0 r0 <32767> | add r0 4 32767
+0x17b1: call <6027> | call 0x178b
+0x178b: jt r0 <6035> | jt 3 0x1793
+0x1793: jt r1 <6048> | jt 1 0x17a0
+0x17a0: push r0 | push 3
+0x17a2: add r1 r1 <32767> | add r1 1 32767
+0x17a6: call <6027> | call 0x178b
+0x178b: jt r0 <6035> | jt 3 0x1793
+0x1793: jt r1 <6048> | jt 0 0x17a0
+0x1796: add r0 r0 <32767> | add r0 3 32767
+0x179a: set r1 r7 | set r1 0
+0x179d: call <6027> | call 0x178b
+0x178b: jt r0 <6035> | jt 2 0x1793
+0x1793: jt r1 <6048> | jt 0 0x17a0
+0x1796: add r0 r0 <32767> | add r0 2 32767
+0x179a: set r1 r7 | set r1 0
+0x179d: call <6027> | call 0x178b
+0x178b: jt r0 <6035> | jt 1 0x1793
+0x1793: jt r1 <6048> | jt 0 0x17a0
+0x1796: add r0 r0 <32767> | add r0 1 32767
+0x179a: set r1 r7 | set r1 0
+0x179d: call <6027> | call 0x178b
+0x178b: jt r0 <6035> | jt 0 0x1793
+0x178e: add r0 r1 <1> | add r0 0 1
+0x1792: ret | ret 0x179f
+0x179f: ret | ret 0x179f
+0x179f: ret | ret 0x179f
+0x179f: ret | ret 0x17a8
+0x17a8: set r1 r0 | set r1 1
+0x17ab: pop r0 | pop r0
+0x17ad: add r0 r0 <32767> | add r0 3 32767
+0x17b1: call <6027> | call 0x178b
+0x178b: jt r0 <6035> | jt 2 0x1793
+0x1793: jt r1 <6048> | jt 1 0x17a0
+0x17a0: push r0 | push 2
+0x17a2: add r1 r1 <32767> | add r1 1 32767
+0x17a6: call <6027> | call 0x178b
+0x178b: jt r0 <6035> | jt 2 0x1793
+0x1793: jt r1 <6048> | jt 0 0x17a0
+0x1796: add r0 r0 <32767> | add r0 2 32767
+0x179a: set r1 r7 | set r1 0
+0x179d: call <6027> | call 0x178b
+0x178b: jt r0 <6035> | jt 1 0x1793
+0x1793: jt r1 <6048> | jt 0 0x17a0
+0x1796: add r0 r0 <32767> | add r0 1 32767
+0x179a: set r1 r7 | set r1 0
+0x179d: call <6027> | call 0x178b
+0x178b: jt r0 <6035> | jt 0 0x1793
+0x178e: add r0 r1 <1> | add r0 0 1
+0x1792: ret | ret 0x179f
+0x179f: ret | ret 0x179f
+0x179f: ret | ret 0x17a8
+0x17a8: set r1 r0 | set r1 1
+0x17ab: pop r0 | pop r0
+0x17ad: add r0 r0 <32767> | add r0 2 32767
+0x17b1: call <6027> | call 0x178b
+0x178b: jt r0 <6035> | jt 1 0x1793
+0x1793: jt r1 <6048> | jt 1 0x17a0
+0x17a0: push r0 | push 1
+0x17a2: add r1 r1 <32767> | add r1 1 32767
+0x17a6: call <6027> | call 0x178b
+0x178b: jt r0 <6035> | jt 1 0x1793
+0x1793: jt r1 <6048> | jt 0 0x17a0
+0x1796: add r0 r0 <32767> | add r0 1 32767
+0x179a: set r1 r7 | set r1 0
+0x179d: call <6027> | call 0x178b
+0x178b: jt r0 <6035> | jt 0 0x1793
+0x178e: add r0 r1 <1> | add r0 0 1
+0x1792: ret | ret 0x179f
+0x179f: ret | ret 0x17a8
+0x17a8: set r1 r0 | set r1 1
+0x17ab: pop r0 | pop r0
+0x17ad: add r0 r0 <32767> | add r0 1 32767
+0x17b1: call <6027> | call 0x178b
+0x178b: jt r0 <6035> | jt 0 0x1793
+0x178e: add r0 r1 <1> | add r0 1 1
+0x1792: ret | ret 0x17b3
+0x17b3: ret | ret 0x17b3
+0x17b3: ret | ret 0x17b3
+0x17b3: ret | ret 0x17b3
+0x17b3: ret | ret 0x1573 // this ret is taking off the top of the stack?
+
+// no modify
+0x1573: eq r1 r0 <6> | eq r1 2 6
+0x1577: jf r1 <5579> | jf 0 0x15cb
+0x15cb: push r0 | push 2
+0x15cd: push r1 | push 0
+0x15cd: push r1 | push 0
+0x15cf: push r2 | push 3
+0x15d1: set r0 <29400> | set r0 29400
+0x15d4: set r1 <1531> | set r1 1531
+0x15d7: add r2 <1328> <1481> | add r2 1328 1481
+0x15db: call <1458> | call 0x05b2
+
+// write 1 to r1 @ 0x1577
+0x157a: push r0 | push 2
+0x157a: push r0 | push 2
+0x157c: push r1 | push 1
+0x157e: push r2 | push 3
+0x1580: set r0 <29014> | set r0 29014
+0x1583: set r1 <1531> | set r1 1531
+0x1586: add r2 <4456> <5510> | add r2 4456 5510
+0x158a: call <1458> | call 0x05b2

@@ -1,6 +1,12 @@
 [package]
+authors = ["Patrick Fernie <patrick.fernie@gmail.com>"]
 name = "synacor"
 version = "0.1.0"
-authors = ["Patrick Fernie <patrick.fernie@gmail.com>"]
 
 [dependencies]
+byteorder = "1.0.0"
+clap = "2.20.0"
+env_logger = "0.4.0"
+error-chain = "0.7.2"
+log = "0.3.6"
+try_from = "0.2.1"
